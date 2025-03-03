@@ -7,8 +7,8 @@ import mysql.connector
 from mysql.connector import errorcode
 from dotenv import dotenv_values
 
-# Load .env file
-secrets = dotenv_values(".env")
+# Load environment variables from the specified full path
+secrets = dotenv_values("C:\\CSD\\csd_310\\module_11\\winery_script.env")  # Use double backslashes for Windows paths
 
 # Database configuration
 config = {
@@ -23,24 +23,22 @@ config = {
 try:
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor()
-    print(f"Connected to database: {config['database']}")  # Moved this inside try
+    print(f"Connected to database: {config['database']}")  # Notify of successful connection
 
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-        print("The supplied username or password are invalid")
+        print("Error: The supplied username or password are invalid")
     elif err.errno == errorcode.ER_BAD_DB_ERROR:
-        print("The specified database does not exist")
+        print("Error: The specified database does not exist")
     else:
-        print(err)
+        print(f"Error: {err}")
     exit(1)  # Exit if connection fails
-
 
 # Function to fetch and display tables in the Winery database
 def show_tables():
     cursor.execute("SHOW TABLES")
     tables = cursor.fetchall()
     return [table[0] for table in tables]
-
 
 # Function to fetch and display data from all tables
 def fetch_all_tables_data():
@@ -70,7 +68,6 @@ def fetch_all_tables_data():
             print(" | ".join(str(cell) for cell in row))
 
         print("-" * 50)
-
 
 # Fetch and display data from all tables
 fetch_all_tables_data()

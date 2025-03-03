@@ -3,10 +3,10 @@
     Date: 24 February 2025
     Description: Winery database initialization script.
 """
-import mysql.connector
 from mysql.connector import errorcode
 from dotenv import load_dotenv
 import os
+import mysql.connector
 
 # Load environment variables from .env file
 load_dotenv()
@@ -15,7 +15,7 @@ load_dotenv()
 config = {
     "user": os.getenv("USER"),          # These will be loaded from the .env file
     "password": os.getenv("PASSWORD"),
-    "host": os.getenv("HOST"),          # Should be '127.0.0.1' to avoid named pipes
+    "host": os.getenv("HOST"),          # Ensure this is set to '127.0.0.1'
     "database": os.getenv("DATABASE"),
 }
 
@@ -32,7 +32,6 @@ try:
 
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-        # Instead of printing sensitive info, describe the error
         print("Error: Access denied. Please check your username and password.")
     elif err.errno == errorcode.ER_BAD_DB_ERROR:
         print("Error: The specified database does not exist.")
@@ -40,12 +39,10 @@ except mysql.connector.Error as err:
         print(f"Error: {err}")  # Print other errors without detail
     exit(1)
 
-# Continue with your SQL operations...
-
 # Function to run SQL commands from a file
 def execute_sql_file(filename):
     with open(filename, 'r') as file:
-        sql_commands = file.read().split(';')
+        sql_commands = file.read().strip().split(';')
         for command in sql_commands:
             command = command.strip()
             if command:
