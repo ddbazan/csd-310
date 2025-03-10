@@ -1,0 +1,32 @@
+class Employee(Base):
+    __tablename__ = 'employees'
+    employee_id = Column(Integer, primary_key=True)
+    name = Column(String)
+    hours_worked = Column(Integer)  # May need to adjust for actual hours tracker based on design
+
+report = session.query(Employee.name, func.sum(Employee.hours_worked).label('total_hours')).group_by(Employee.name).all()
+
+for employee in report:
+    print(f"Employee Name: {employee.name}, Total Hours Worked: {employee.total_hours}")
+
+#wine sales by the type and distributor
+
+
+from sqlalchemy import func
+
+class WineDistribution(Base):
+    __tablename__ = 'wine_distribution'
+    distribution_id = Column(Integer, primary_key=True)
+    wine_id = Column(Integer, ForeignKey('wines.wine_id'))
+    distributor_id = Column(Integer, ForeignKey('distributors.distributor_id'))
+    quantity = Column(Integer)
+
+report = session.query(
+    WineDistribution.wine_id,
+    func.sum(WineDistribution.quantity).label('total_sales')
+).group_by(WineDistribution.wine_id).all()
+
+for wine in report:
+    print(f"Wine ID: {wine.wine_id}, Total Sales: {wine.total_sales}")
+
+    #expected versus actual delivery sales
